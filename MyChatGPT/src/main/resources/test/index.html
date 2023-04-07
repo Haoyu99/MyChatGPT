@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyCHATGPT</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        input[type=text] {
+            padding: 10px;
+            width: 70%;
+            border: none;
+            border-radius: 20px 0 0 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #3385ff;
+            color: #fff;
+            border: none;
+            border-radius: 0 20px 20px 0;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background-color: #1a66cc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>输入你的问题</h1>
+    <form>
+        <input type="text" placeholder="在此输入你的建议..."  id="searchBox">
+        <button id="searchButton">提问</button>
+    </form>
+
+    <div class="result">
+        <p></p>
+        <p></p>
+        <p></p>
+        <p></p>
+        <div id="searchResults"></div>
+
+        <!-- 这里用来显示搜索结果 -->
+    </div>
+</div>
+
+<!--<script>-->
+<!--    function sendData() {-->
+<!--        const url = "http://localhost:8080/question";  // 替换成实际的URL-->
+<!--        const keyword = document.getElementById("input-box").value;-->
+<!--        const data = { "question": keyword };-->
+<!--        const options = {-->
+<!--            method: "POST",-->
+<!--            headers: { "Content-Type": "application/json" },-->
+<!--            body: JSON.stringify(data)-->
+<!--        };-->
+<!--        fetch(url, options)-->
+<!--            .then(response => response.json())-->
+<!--            .then(result => {-->
+<!--                console.log(result);-->
+<!--            })-->
+<!--            .catch(error => console.error(error));-->
+<!--    }-->
+<!--</script>-->
+<script>
+    $(document).ready(function() {
+        $("#searchButton").click(function() {
+            var keyword = $("#searchBox").val();
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json',
+                url: "http://localhost:8080/question",
+                data: '{ "question": "你好" }',
+                success: function(data) {
+                    $("#searchResults").html(data);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
