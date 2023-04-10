@@ -5,4 +5,8 @@ import lombok.Data;
 @Data
 public class Answer {
     String answer;
+
+    public Answer(String answer) {
+        this.answer = answer;
+    }
 }

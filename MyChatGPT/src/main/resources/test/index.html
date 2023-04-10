@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>MyCHATGPT</title>
+    <title>MyChatGPT</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@3.0.7/marked.min.js"></script>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -10,24 +13,28 @@
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             text-align: center;
         }
+
         h1 {
             font-size: 36px;
             margin-bottom: 20px;
         }
+
         input[type=text] {
             padding: 10px;
             width: 70%;
             border: none;
             border-radius: 20px 0 0 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             font-size: 16px;
         }
+
         button {
             padding: 10px 20px;
             background-color: #3385ff;
@@ -36,65 +43,98 @@
             border-radius: 0 20px 20px 0;
             font-size: 16px;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         button:hover {
             background-color: #1a66cc;
+
         }
     </style>
+    <style>
+        /* 加载界面样式 */
+        .loading {
+            display: none; /* 初始状态隐藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+            z-index: 9999; /* 最高层级 */
+        }
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+        }
+        /* Markdown 转换后的文本样式 */
+        .markdown-text {
+            /* 添加自定义的样式，例如左对齐 */
+            text-align: left;
+        }
+
+    </style>
 </head>
+
 <body>
-<div class="container">
-    <h1>输入你的问题</h1>
-    <form>
-        <input type="text" placeholder="在此输入你的建议..."  id="searchBox">
-        <button id="searchButton">提问</button>
-    </form>
+    <div class="container">
+        <h1>输入你的问题</h1>
+        <form>
+            <input type="text" value="" placeholder="在此输入你的建议..." id="searchBox">
+            <button id="searchButton">提问</button>
+        </form>
+        <br>
+        <br>
+        <div class="result" id="result">
+        </div>
 
-    <div class="result">
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <div id="searchResults"></div>
-
-        <!-- 这里用来显示搜索结果 -->
+        <!-- 加载界面 -->
+        <div id="loading" class="loading">
+            <div class="loading-text">正在加载...</div>
+        </div>
     </div>
-</div>
 
-<!--<script>-->
-<!--    function sendData() {-->
-<!--        const url = "http://localhost:8080/question";  // 替换成实际的URL-->
-<!--        const keyword = document.getElementById("input-box").value;-->
-<!--        const data = { "question": keyword };-->
-<!--        const options = {-->
-<!--            method: "POST",-->
-<!--            headers: { "Content-Type": "application/json" },-->
-<!--            body: JSON.stringify(data)-->
-<!--        };-->
-<!--        fetch(url, options)-->
-<!--            .then(response => response.json())-->
-<!--            .then(result => {-->
-<!--                console.log(result);-->
-<!--            })-->
-<!--            .catch(error => console.error(error));-->
-<!--    }-->
-<!--</script>-->
-<script>
-    $(document).ready(function() {
-        $("#searchButton").click(function() {
-            var keyword = $("#searchBox").val();
-            $.ajax({
-                type: 'POST',
-                contentType: 'application/json',
-                url: "http://localhost:8080/question",
-                data: '{ "question": "你好" }',
-                success: function(data) {
-                    $("#searchResults").html(data);
-                }
+
+
+    <script type="text/javascript" charSet="UTF-8">
+        $(document).ready(function () {
+            $("#searchButton").click(function () {
+                // var keyword = $("#searchBox").val();
+                var searchBoxText = document.getElementById("searchBox").value;
+                var searchResults = document.getElementsByClassName('searchResults');
+                // 显示加载界面
+                $('#loading').show();
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'html', // 指定数据类型为html
+                    url: "http://10.112.174.79:8080/question",
+                    data: JSON.stringify({ "question": searchBoxText}),
+                    success: function (data) {
+                        let obj = JSON.parse(data);
+                        var str = obj.answer;
+                        const markdownText = marked(str);
+
+                        console.log(markdownText);
+                        var resultElement= document.getElementById('result');
+                        resultElement.innerHTML = `<div class="markdown-text">${markdownText}</div>`;
+                        // document.getElementById('result').innerHTML = markdownText;
+                        // 隐藏加载界面
+                        $('#loading').hide();
+                        // alert('成功获取')
+                    },
+                    complete: function() {
+                        // 隐藏加载界面
+                        $('#loading').hide();
+                    }
+                });
+                window.event.returnValue = false
             });
         });
-    });
-</script>
+    </script>
 </body>
+
 </html>

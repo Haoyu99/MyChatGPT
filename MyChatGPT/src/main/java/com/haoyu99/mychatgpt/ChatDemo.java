@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatDemo {
-  public static final String MyToken = "sk-1";
+  public static final String MyToken = "";
   public static final String model = "gpt-3.5-turbo";
     public static void main(String[] args) {
         Map<String,String> headers = new HashMap<String,String>();
